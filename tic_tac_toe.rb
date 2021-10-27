@@ -28,45 +28,37 @@ class Grid
   end
 
   def []=(row, value)
-    @rows[row] == ' ' ? (@rows[row] = value) : (puts 'Invalid input')
+    @rows[row] = value
   end
 
-  def check_row(row)
-    @rows[row][0] != ' ' && @rows[row][0] == @rows[row][1] && @rows[row][1] == @rows[row][2]
+  def check_rows
+    [0, 1, 2].cycle(1) do |row|
+      return @rows[row][0] if @rows[row][0] + @rows[row][1] + @rows[row][2] =~ /XXX|OOO/
+    end
   end
 
-  def check_column(column)
-    @rows[0][column] != ' ' && @rows[0][column] == @rows[1][column] && @rows[1][column] == @rows[2][column]
+  def check_columns
+    [0, 1, 2].cycle(1) do |column|
+      return @rows[0][column] if @rows[0][column] + @rows[1][column] + @rows[2][column] =~ /XXX|OOO/
+    end
   end
 
-  def check_main_diagonal
-    @rows[0][0] != ' ' && @rows[0][0] == @rows[1][1] && @rows[1][1] == @rows[2][2]
-  end
-
-  def check_minor_diagonal
-    @rows[0][2] != ' ' && @rows[0][2] == @rows[1][1] && @rows[1][1] == @rows[2][0]
+  def check_diagonals
+    [0, 2].cycle(1) do |parameter|
+      return @rows[1][1] if @rows[0][parameter] + @rows[1][1] + @rows[2][2 - parameter] =~ /XXX|OOO/
+    end
   end
 
   def winner?
-    (0..2).each do |iterator|
-      return @rows[iterator][0] if check_row(iterator)
-      return @rows[0][iterator] if check_column(iterator)
-    end
-    return @rows[1][1] if check_main_diagonal || check_minor_diagonal
-
-    false
+    check_rows || check_columns || check_diagonals
   end
 
   def end?
-    winner? || @rows.map { |row| row.include?(' ') }.all?(false)
-  end
-
-  def row_layout(row)
-    " #{@rows[row][0]} | #{@rows[row][1]} | #{@rows[row][2]} "
+    winner? || @rows.each { |row| return false if row.include?(' ') }
   end
 
   def layout
-    "#{row_layout(0)}\n---+---+---\n#{row_layout(1)}\n---+---+---\n#{row_layout(2)}"
+    @rows.map { |row| " #{row.join(' | ')} " }.join("\n---+---+---\n")
   end
 end
 
