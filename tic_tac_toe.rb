@@ -63,36 +63,62 @@ class Grid
 end
 
 #
+# The +Interface+ module acts as the game interface. It provides methods...
+#
+module Interface
+  def intro_message
+    puts 'Welcome to Ruby Tic Tac Toe!'
+  end
+
+  def get_name_message(number)
+    "Player #{number + 1}, please enter your name."
+  end
+
+  def set_marker_message(name, marker)
+    "Thank you #{name}. Your marker will be #{marker}."
+  end
+
+  def get_input_message(name)
+    "It is your turn #{name}."
+  end
+
+  def error_message
+    'Invalid input!'
+  end
+
+  def end_game_message(winner)
+    winner ? "Congratulations #{winner}, you won!" : 'It is a draw!'
+  end
+end
+
+#
 # The +Game+ class represents a Tic Tac Toe game. It provides methods for creating
 # games, start game intro, initialize players and grid, collect players input and
 # check for winners and game end.
 #
 class Game
+  include Interface
+
   def initialize
-    game_intro
+    @players = []
+    @grid = Grid.new
+  end
+
+  def play
+    intro_message
     initialize_players
-    initialize_grid
     main_routine
     game_end
   end
 
-  def game_intro
-    puts 'Welcome to Ruby Tic Tac Toe'
-  end
-
   def initialize_players
-    @players = []
     (0..1).each do |number|
-      puts "Player #{number + 1}, please enter your name."
+      puts get_name_message(number)
       name = gets.chomp
       marker = number.zero? ? 'X' : 'O'
       @players.push(Player.new(name, marker))
-      puts "Thank you #{@players[number].name}. Your marker will be #{@players[number].marker}."
+      puts set_marker_message(@players[number].name, @players[number].marker)
     end
-  end
-
-  def initialize_grid
-    @grid = Grid.new
   end
 
   def main_routine
@@ -110,7 +136,7 @@ class Game
   end
 
   def get_input(player)
-    puts "It is your turn #{@players[player].name}."
+    puts get_input_message(@players[player].name)
     input = valid_input
     @grid[input[0].to_i][input[1].to_i] = @players[player].marker
   end
@@ -118,23 +144,18 @@ class Game
   def valid_input
     loop do
       input = gets.chomp
-      return input if @grid[input[0].to_i][input[1].to_i] == ' '
+      possible_inputs = %w[00 01 02 10 11 12 20 21 22]
+      return input if possible_inputs.include?(input) && @grid[input[0].to_i][input[1].to_i] == ' '
 
-      puts 'Invalid input!'
+      puts error_message
     end
   end
 
   def game_end
-    winner = @grid.winner?
-    case winner
-    when 'X'
-      puts "Congratulations #{@players[0].name}, you won!"
-    when 'O'
-      puts "Congratulations #{@players[1].name}, you won!"
-    else
-      puts 'It is a draw!'
-    end
+    winner = @players.select { |player| player.marker == @grid.winner? }
+    puts end_game_message(winner[0]&.name)
   end
 end
 
-Game.new
+game = Game.new
+game.play
