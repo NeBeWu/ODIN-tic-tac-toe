@@ -18,6 +18,18 @@ class Grid
     @rows[row] = value
   end
 
+  def layout
+    @rows.map { |row| " #{row.join(' | ')} " }.join("\n---+---+---\n")
+  end
+
+  def empty?(row, column)
+    @rows[row][column] == ' '
+  end
+
+  def full?
+    @rows.each { |row| return false if row.include?(' ') }
+  end
+
   def check_rows
     [0, 1, 2].cycle(1) do |row|
       return @rows[row][0] if @rows[row][0] + @rows[row][1] + @rows[row][2] =~ /XXX|OOO/
@@ -41,10 +53,6 @@ class Grid
   end
 
   def end?
-    winner? || @rows.each { |row| return false if row.include?(' ') }
-  end
-
-  def layout
-    @rows.map { |row| " #{row.join(' | ')} " }.join("\n---+---+---\n")
+    winner? || full?
   end
 end
