@@ -19,7 +19,7 @@ class Grid
   end
 
   def layout
-    @rows.map { |row| " #{row.join(' | ')} " }.join("\n---+---+---\n")
+    puts(@rows.map { |row| " #{row.join(' | ')} " }.join("\n---+---+---\n"))
   end
 
   def empty?(row, column)
@@ -31,19 +31,19 @@ class Grid
   end
 
   def check_rows
-    [0, 1, 2].cycle(1) do |row|
+    3.times do |row|
       return @rows[row][0] if @rows[row][0] + @rows[row][1] + @rows[row][2] =~ /XXX|OOO/
     end
   end
 
   def check_columns
-    [0, 1, 2].cycle(1) do |column|
+    3.times do |column|
       return @rows[0][column] if @rows[0][column] + @rows[1][column] + @rows[2][column] =~ /XXX|OOO/
     end
   end
 
   def check_diagonals
-    [0, 2].cycle(1) do |parameter|
+    2.times do |parameter|
       return @rows[1][1] if @rows[0][parameter] + @rows[1][1] + @rows[2][2 - parameter] =~ /XXX|OOO/
     end
   end
