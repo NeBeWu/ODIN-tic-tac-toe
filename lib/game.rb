@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require_relative 'player'
+require_relative 'grid'
+require_relative 'interface'
+
 #
 # The +Game+ class represents a Tic Tac Toe game. It provides methods for creating
 # games, start game intro, initialize players and grid, collect players input and
@@ -14,54 +18,74 @@ class Game
   end
 
   def play
-    intro_message
-    initialize_players
-    main_routine
+    game_start
+    game_loop
     game_end
   end
 
+  def game_start
+    intro_message
+    initialize_players
+  end
+
   def initialize_players
-    (0..1).each do |number|
-      puts get_name_message(number)
-      name = gets.chomp
-      marker = number.zero? ? 'X' : 'O'
-      @players.push(Player.new(name, marker))
-      puts set_marker_message(@players[number].name, @players[number].marker)
+    2.times do |number|
+      @players.push(create_player(number))
     end
   end
 
-  def main_routine
-    print_grid
+  def create_player(number)
+    name = get_name(number)
+    marker = select_marker(number)
+    set_marker_message(name, marker)
+
+    Player.new(name, marker)
+  end
+
+  def get_name(number)
+    get_name_message(number)
+    gets.chomp
+  end
+
+  def select_marker(number)
+    number.zero? ? 'X' : 'O'
+  end
+
+  def game_loop
+    @grid.layout
     turn = 0
     until @grid.end?
-      get_input(turn.%2)
-      print_grid
+      player_move(turn.%2)
+      @grid.layout
       turn += 1
     end
   end
 
-  def print_grid
-    puts @grid.layout
+  def player_move(player)
+    get_input_message(@players[player].name)
+    slot = player_input
+    @grid[slot.first][slot.last] = @players[player].marker
   end
 
-  def get_input(player)
-    puts get_input_message(@players[player].name)
-    input = valid_input
-    @grid[input[0].to_i][input[1].to_i] = @players[player].marker
-  end
-
-  def valid_input
+  def player_input
     loop do
-      input = gets.chomp
-      possible_inputs = %w[00 01 02 10 11 12 20 21 22]
-      return input if possible_inputs.include?(input) && @grid[input[0].to_i][input[1].to_i] == ' '
+      slot = gets.chomp.chars.map(&:to_i)
+      return slot if valid_slot?(slot)
 
-      puts error_message
+      error_message
     end
   end
 
+  def valid_slot?(slot)
+    possible_slots = [[0, 0], [0, 1], [0, 2],
+                      [1, 0], [1, 1], [1, 2],
+                      [2, 0], [2, 1], [2, 2]]
+
+    possible_slots.include?(slot) && @grid.empty?(*slot)
+  end
+
   def game_end
-    winner = @players.select { |player| player.marker == @grid.winner? }
-    puts end_game_message(winner[0]&.name)
+    winner = @players.select { |player| player.marker == @grid.winner? }.first
+    end_game_message(winner&.name)
   end
 end
