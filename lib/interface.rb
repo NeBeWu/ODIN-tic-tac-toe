@@ -9,22 +9,22 @@ module Interface
   end
 
   def get_name_message(number)
-    "Player #{number + 1}, please enter your name."
+    puts "Player #{number + 1}, please enter your name."
   end
 
   def set_marker_message(name, marker)
-    "Thank you #{name}. Your marker will be #{marker}."
+    puts "Thank you #{name}. Your marker will be #{marker}."
   end
 
   def get_input_message(name)
-    "It is your turn #{name}."
+    puts "It is your turn #{name}."
   end
 
   def error_message
-    'Invalid input!'
+    puts 'Invalid input!'
   end
 
   def end_game_message(winner)
-    winner ? "Congratulations #{winner}, you won!" : 'It is a draw!'
+    puts(winner ? "Congratulations #{winner}, you won!" : 'It is a draw!')
   end
 end
