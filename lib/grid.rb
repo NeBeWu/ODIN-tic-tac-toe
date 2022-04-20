@@ -34,18 +34,24 @@ class Grid
     3.times do |row|
       return @rows[row][0] if @rows[row][0] + @rows[row][1] + @rows[row][2] =~ /XXX|OOO/
     end
+
+    nil
   end
 
   def check_columns
     3.times do |column|
       return @rows[0][column] if @rows[0][column] + @rows[1][column] + @rows[2][column] =~ /XXX|OOO/
     end
+
+    nil
   end
 
   def check_diagonals
     2.times do |parameter|
-      return @rows[1][1] if @rows[0][parameter] + @rows[1][1] + @rows[2][2 - parameter] =~ /XXX|OOO/
+      return @rows[1][1] if @rows[0][2 * parameter] + @rows[1][1] + @rows[2][2 - 2 * parameter] =~ /XXX|OOO/
     end
+
+    nil
   end
 
   def winner?

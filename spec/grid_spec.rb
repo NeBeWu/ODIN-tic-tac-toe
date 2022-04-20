@@ -237,33 +237,33 @@ describe Grid do
       it 'returns nil' do
         expect(grid.check_diagonals).to be_nil
       end
+    end
 
-      context 'when X has a matching row' do
-        before do
-          grid.instance_variable_set(:@rows, [
-                                       %w[X O X],
-                                       %w[O X O],
-                                       %w[X X O]
-                                     ])
-        end
-
-        it 'returns X' do
-          expect(grid.check_diagonals).to be('X')
-        end
+    context 'when X has a matching row' do
+      before do
+        grid.instance_variable_set(:@rows, [
+                                     %w[X O X],
+                                     %w[O X O],
+                                     %w[X X O]
+                                   ])
       end
 
-      context 'when O has a matching row' do
-        before do
-          grid.instance_variable_set(:@rows, [
-                                       ['O', ' ', ' '],
-                                       ['X', 'O', ' '],
-                                       %w[X X O]
-                                     ])
-        end
+      it 'returns X' do
+        expect(grid.check_diagonals).to be('X')
+      end
+    end
 
-        it 'returns O' do
-          expect(grid.check_diagonals).to be('O')
-        end
+    context 'when O has a matching row' do
+      before do
+        grid.instance_variable_set(:@rows, [
+                                     ['O', ' ', ' '],
+                                     ['X', 'O', ' '],
+                                     %w[X X O]
+                                   ])
+      end
+
+      it 'returns O' do
+        expect(grid.check_diagonals).to be('O')
       end
     end
   end
